@@ -7,7 +7,6 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  // Use Turso cloud DB in production, local SQLite file in dev
   const url = process.env.TURSO_DATABASE_URL ?? `file:${path.join(process.cwd(), "dev.db")}`;
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
@@ -17,6 +16,12 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Use a getter to lazily initialize - avoids issues with build-time evaluation
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient();
+    }
+    return (globalForPrisma.prisma as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
