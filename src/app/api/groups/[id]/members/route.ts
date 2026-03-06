@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-utils";
+import { sendInviteEmail } from "@/lib/email";
 import { z } from "zod";
 
 const addMemberSchema = z.object({
@@ -22,6 +23,10 @@ export async function POST(
   // Check current user is a member
   const currentMembership = await prisma.groupMember.findFirst({
     where: { groupId, userId: session.user.id },
+    include: {
+      user: { select: { name: true, email: true } },
+      group: { select: { name: true } },
+    },
   });
 
   if (!currentMembership) {
@@ -67,6 +72,16 @@ export async function POST(
         user: { select: { id: true, name: true, email: true } },
       },
     });
+
+    // Send invitation email (non-blocking — don't fail the request if email fails)
+    const inviterName = currentMembership.user.name || currentMembership.user.email;
+    const groupName = currentMembership.group.name;
+    sendInviteEmail({
+      to: email,
+      inviterName,
+      groupName,
+      groupId,
+    }).catch((err) => console.error("Invite email failed:", err));
 
     return NextResponse.json(member, { status: 201 });
   } catch (error) {
