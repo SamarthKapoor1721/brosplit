@@ -61,8 +61,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    const errMsg = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Something went wrong", details: errMsg },
       { status: 500 }
     );
   }
