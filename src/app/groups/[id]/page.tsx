@@ -243,36 +243,38 @@ export default function GroupPage() {
           ← Back to Groups
         </Link>
 
-        <div className="flex items-start justify-between mb-6 mt-2">
-          <div>
-            <h1 className="text-3xl font-bold">{group.name}</h1>
-            {group.description && (
-              <p className="text-muted mt-1">{group.description}</p>
-            )}
-            <div className="flex items-center gap-4 mt-2 text-sm text-muted">
-              <span>{group.members.length} members</span>
-              <span>•</span>
-              <span>{group.expenses.length} expenses</span>
-              <span>•</span>
-              <span>Total: ₹{totalExpenses.toFixed(2)}</span>
+        <div className="mb-6 mt-2">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold">{group.name}</h1>
+              {group.description && (
+                <p className="text-muted mt-1">{group.description}</p>
+              )}
+              <div className="flex items-center gap-4 mt-2 text-sm text-muted">
+                <span>{group.members.length} members</span>
+                <span>•</span>
+                <span>{group.expenses.length} expenses</span>
+                <span>•</span>
+                <span>Total: ₹{totalExpenses.toFixed(2)}</span>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {isAdmin && (
+            <div className="flex items-center gap-2">
+              {isAdmin && (
+                <button
+                  onClick={deleteGroup}
+                  className="px-4 py-2.5 rounded-xl border border-danger/30 text-danger text-sm font-medium hover:bg-danger/10 transition-all cursor-pointer"
+                  title="Delete group"
+                >
+                  🗑️ Delete
+                </button>
+              )}
               <button
-                onClick={deleteGroup}
-                className="px-4 py-2.5 rounded-xl border border-danger/30 text-danger text-sm font-medium hover:bg-danger/10 transition-all cursor-pointer"
-                title="Delete group"
+                onClick={openAddExpenseModal}
+                className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover transition-all shadow-lg shadow-primary/25 cursor-pointer"
               >
-                🗑️ Delete
+                + Add Expense
               </button>
-            )}
-            <button
-              onClick={openAddExpenseModal}
-              className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover transition-all shadow-lg shadow-primary/25 cursor-pointer"
-            >
-              + Add Expense
-            </button>
+            </div>
           </div>
         </div>
 
@@ -462,6 +464,29 @@ export default function GroupPage() {
                 </span>
               </div>
             ))}
+
+            {/* Danger Zone */}
+            {isAdmin && (
+              <div className="mt-8 pt-6 border-t border-border">
+                <h3 className="text-sm font-semibold text-danger mb-2">Danger Zone</h3>
+                <div className="p-4 rounded-xl border border-danger/20 bg-danger/5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                      <p className="font-medium text-sm">Delete this group</p>
+                      <p className="text-muted text-xs">
+                        Permanently delete this group and all its expenses. This cannot be undone.
+                      </p>
+                    </div>
+                    <button
+                      onClick={deleteGroup}
+                      className="px-4 py-2 rounded-lg bg-danger text-white text-sm font-medium hover:bg-danger/90 transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      🗑️ Delete Group
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
