@@ -25,7 +25,7 @@ export async function DELETE(
 
   // Only the person who paid or a group admin can delete
   const isAdmin = expense.group.members.some(
-    (m) => m.userId === session.user.id && m.role === "admin"
+    (m: { userId: string; role: string }) => m.userId === session.user.id && m.role === "admin"
   );
   const isPayer = expense.paidById === session.user.id;
 
