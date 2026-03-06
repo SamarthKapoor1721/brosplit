@@ -64,6 +64,7 @@ export default function GroupPage() {
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [expenseDesc, setExpenseDesc] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("");
+  const [expensePaidBy, setExpensePaidBy] = useState("");
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [addingExpense, setAddingExpense] = useState(false);
 
@@ -122,12 +123,14 @@ export default function GroupPage() {
         body: JSON.stringify({
           description: expenseDesc,
           amount: parseFloat(expenseAmount),
+          paidById: expensePaidBy,
           splitAmong: selectedMembers,
         }),
       });
       if (res.ok) {
         setExpenseDesc("");
         setExpenseAmount("");
+        setExpensePaidBy(session?.user?.id || "");
         setSelectedMembers([]);
         setShowAddExpense(false);
         fetchGroup();
@@ -180,6 +183,7 @@ export default function GroupPage() {
     if (group) {
       setSelectedMembers(group.members.map((m) => m.user.id));
     }
+    setExpensePaidBy(session?.user?.id || "");
     setShowAddExpense(true);
   };
 
@@ -462,6 +466,29 @@ export default function GroupPage() {
                       placeholder="0.00"
                       required
                     />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-muted mb-1.5">
+                    Paid by *
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={expensePaidBy}
+                      onChange={(e) => setExpensePaidBy(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 transition-all appearance-none cursor-pointer"
+                      required
+                    >
+                      {group.members.map((member) => (
+                        <option key={member.user.id} value={member.user.id}>
+                          {member.user.name || member.user.email}
+                          {member.user.id === session?.user?.id ? " (You)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted">
+                      ▾
+                    </div>
                   </div>
                 </div>
                 <div>

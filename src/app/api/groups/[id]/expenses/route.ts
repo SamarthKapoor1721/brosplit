@@ -6,6 +6,7 @@ import { z } from "zod";
 const createExpenseSchema = z.object({
   description: z.string().min(1, "Description is required"),
   amount: z.number().positive("Amount must be positive"),
+  paidById: z.string().optional(),
   splitAmong: z.array(z.string()).min(1, "Must split among at least one person"),
   date: z.string().optional(),
 });
@@ -36,7 +37,20 @@ export async function POST(
 
   try {
     const body = await request.json();
-    const { description, amount, splitAmong, date } = createExpenseSchema.parse(body);
+    const { description, amount, paidById, splitAmong, date } = createExpenseSchema.parse(body);
+
+    const payerId = paidById || session.user.id;
+
+    // Verify the payer is a member of the group
+    const payerMembership = await prisma.groupMember.findFirst({
+      where: { groupId, userId: payerId },
+    });
+    if (!payerMembership) {
+      return NextResponse.json(
+        { error: "The selected payer is not a member of this group" },
+        { status: 400 }
+      );
+    }
 
     const splitAmount = Math.round((amount / splitAmong.length) * 100) / 100;
     // Handle rounding remainder so total splits == expense amount
@@ -47,7 +61,7 @@ export async function POST(
         description,
         amount,
         date: date ? new Date(date) : new Date(),
-        paidById: session.user.id,
+        paidById: payerId,
         groupId,
         splits: {
           create: splitAmong.map((userId, index) => ({
