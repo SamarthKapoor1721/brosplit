@@ -206,6 +206,29 @@ export default function GroupPage() {
   if (!group) return null;
 
   const totalExpenses = group.expenses.reduce((sum, e) => sum + e.amount, 0);
+  const isAdmin = group.members.some(
+    (m) => m.user.id === session?.user?.id && m.role === "admin"
+  );
+
+  const deleteGroup = async () => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this group? All expenses and balances will be permanently lost."
+      )
+    )
+      return;
+    try {
+      const res = await fetch(`/api/groups/${groupId}`, { method: "DELETE" });
+      if (res.ok) {
+        router.push("/dashboard");
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete group");
+      }
+    } catch {
+      alert("Something went wrong");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -234,12 +257,23 @@ export default function GroupPage() {
               <span>Total: ₹{totalExpenses.toFixed(2)}</span>
             </div>
           </div>
-          <button
-            onClick={openAddExpenseModal}
-            className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover transition-all shadow-lg shadow-primary/25 cursor-pointer"
-          >
-            + Add Expense
-          </button>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <button
+                onClick={deleteGroup}
+                className="px-4 py-2.5 rounded-xl border border-danger/30 text-danger text-sm font-medium hover:bg-danger/10 transition-all cursor-pointer"
+                title="Delete group"
+              >
+                🗑️ Delete
+              </button>
+            )}
+            <button
+              onClick={openAddExpenseModal}
+              className="px-5 py-2.5 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover transition-all shadow-lg shadow-primary/25 cursor-pointer"
+            >
+              + Add Expense
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
