@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 4050",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && node scripts/migrate-turso.mjs && next build",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:turso": "node scripts/migrate-turso.mjs",
     "postinstall": "prisma generate",
     "start": "next start -p 4050",
     "lint": "eslint"
