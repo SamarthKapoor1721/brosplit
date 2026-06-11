@@ -1,11 +1,15 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-function getResend() {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY is not set");
+function getTransporter() {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass) {
+    throw new Error("GMAIL_USER or GMAIL_APP_PASSWORD is not set");
   }
-  return new Resend(apiKey);
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: { user, pass },
+  });
 }
 
 const APP_URL = process.env.NEXTAUTH_URL || "https://brosplit.vercel.app";
@@ -24,8 +28,9 @@ export async function sendInviteEmail({
   const inviteLink = `${APP_URL}/invite/${groupId}`;
 
   try {
-    await getResend().emails.send({
-      from: "BROSPLIT <onboarding@resend.dev>",
+    console.log(`📧 Attempting to send invite email to: ${to}`);
+    const info = await getTransporter().sendMail({
+      from: `BROSPLIT 💸 <${process.env.GMAIL_USER}>`,
       to,
       subject: `${inviterName} invited you to "${groupName}" on BROSPLIT`,
       html: `
@@ -54,9 +59,10 @@ export async function sendInviteEmail({
         </div>
       `,
     });
+    console.log("✅ Email sent, messageId:", info.messageId);
     return { success: true };
   } catch (error) {
-    console.error("Failed to send invite email:", error);
+    console.error("❌ Failed to send invite email:", error);
     return { success: false, error };
   }
 }

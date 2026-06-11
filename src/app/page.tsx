@@ -1,100 +1,125 @@
 import Link from "next/link";
+import { MicIcon, SparkleIcon, ChartIcon, CreditIcon } from "@/components/Icons";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">B$</span>
+    <div className="min-h-screen">
+      <header className="border-b border-border/60 glass sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-5 py-3.5 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl bg-gradient-brand flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary/30">
+              B$
             </div>
-            <span className="text-xl font-bold">
-              BRO<span className="text-primary">SPLIT</span>
+            <span className="text-base font-bold tracking-tight">
+              BRO<span className="text-gradient">SPLIT</span>
             </span>
-          </div>
-          <div className="flex gap-3">
+          </Link>
+          <div className="flex gap-2">
             <Link
               href="/login"
-              className="px-4 py-2 text-sm rounded-lg border border-border text-muted hover:text-foreground hover:border-primary/50 transition-all"
+              className="px-4 py-2 text-sm rounded-xl border border-border text-muted hover:text-foreground hover:border-primary/40 transition-all"
             >
-              Log In
+              Log in
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 text-sm rounded-lg bg-primary text-white hover:bg-primary-hover transition-all"
+              className="px-4 py-2 text-sm rounded-xl bg-gradient-brand text-white font-medium shadow-lg shadow-primary/30"
             >
-              Sign Up Free
+              Sign up
             </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-24 sm:py-32 text-center">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            💸 Stop the awkward money talks
+      <main className="max-w-6xl mx-auto px-5">
+        <section className="py-20 sm:py-32 text-center relative">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-soft border border-primary/20 text-primary text-xs font-medium mb-6">
+            <SparkleIcon size={14} /> Voice-powered. AI-assisted. Bro-tested.
           </div>
-          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight mb-6">
-            Split expenses
+          <h1 className="text-5xl sm:text-7xl font-semibold tracking-tight">
+            Split money
             <br />
-            <span className="text-primary">like a bro.</span>
+            <span className="text-gradient">like it&apos;s 2026.</span>
           </h1>
-          <p className="text-muted text-lg sm:text-xl max-w-2xl mx-auto mb-10">
-            Create groups, add expenses, and let BROSPLIT figure out who owes
-            what. No more spreadsheets, no more arguments. Just vibes.
+          <p className="text-muted text-base sm:text-lg max-w-xl mx-auto mt-6">
+            Just say it: <span className="text-foreground">&ldquo;Add 500 dinner with Rahul split equally.&rdquo;</span>{" "}
+            BROSPLIT figures out the math, the people, the category — and shows you who&apos;s up.
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="mt-10 flex items-center justify-center gap-3">
             <Link
               href="/register"
-              className="px-8 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary-hover transition-all text-lg shadow-lg shadow-primary/25"
+              className="px-7 py-3.5 rounded-2xl bg-gradient-brand text-white font-medium shadow-xl shadow-primary/30"
             >
-              Get Started — It&apos;s Free
+              Get started — free
+            </Link>
+            <Link
+              href="/login"
+              className="px-7 py-3.5 rounded-2xl border border-border text-muted hover:text-foreground hover:border-primary/40 transition-all"
+            >
+              Log in
             </Link>
           </div>
-        </div>
+        </section>
 
-        {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-24">
-          <div className="p-6 rounded-2xl bg-card border border-border">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl mb-4">
-              👥
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Create Groups</h3>
-            <p className="text-muted text-sm">
-              Roommates, trips, dinners — create a group for any occasion and
-              invite friends by email.
-            </p>
-          </div>
-          <div className="p-6 rounded-2xl bg-card border border-border">
-            <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-2xl mb-4">
-              💰
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Track Expenses</h3>
-            <p className="text-muted text-sm">
-              Add expenses and they get automatically split among group members.
-              Fair and square.
-            </p>
-          </div>
-          <div className="p-6 rounded-2xl bg-card border border-border">
-            <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center text-2xl mb-4">
-              ✅
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Settle Up</h3>
-            <p className="text-muted text-sm">
-              Smart debt simplification shows the minimum number of payments
-              needed to settle all balances.
-            </p>
-          </div>
-        </div>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pb-24">
+          <Feature
+            icon={<MicIcon size={20} />}
+            title="Voice-first entry"
+            body="Tap the mic. Talk. Done. Speech-to-expense in under two seconds."
+            tone="primary"
+          />
+          <Feature
+            icon={<SparkleIcon size={20} />}
+            title="AI assistant"
+            body="Natural language → amount, people, category, split — auto-detected."
+            tone="accent"
+          />
+          <Feature
+            icon={<ChartIcon size={20} />}
+            title="Smart insights"
+            body="Where your money goes, who owes you, and how this month stacks up."
+            tone="warning"
+          />
+          <Feature
+            icon={<CreditIcon size={20} />}
+            title="Credit health"
+            body="Your CIBIL score with friendly nudges to keep climbing."
+            tone="success"
+          />
+        </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8 text-center text-muted text-sm">
-        <p>© 2026 BROSPLIT. Built for bros, by bros. 🤝</p>
+      <footer className="border-t border-border py-8 text-center text-muted text-xs">
+        © 2026 BROSPLIT — built for the way you actually hang out.
       </footer>
+    </div>
+  );
+}
+
+function Feature({
+  icon,
+  title,
+  body,
+  tone,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  tone: "primary" | "accent" | "warning" | "success";
+}) {
+  const tones: Record<string, string> = {
+    primary: "bg-primary-soft text-primary",
+    accent: "bg-accent-soft text-accent",
+    warning: "bg-warning-soft text-warning",
+    success: "bg-success-soft text-success",
+  };
+  return (
+    <div className="rounded-2xl bg-card border border-border p-5 hover:bg-card-hover transition-all">
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${tones[tone]}`}>
+        {icon}
+      </div>
+      <h3 className="font-semibold mb-1">{title}</h3>
+      <p className="text-muted text-sm leading-snug">{body}</p>
     </div>
   );
 }

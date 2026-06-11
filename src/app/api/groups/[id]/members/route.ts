@@ -81,7 +81,13 @@ export async function POST(
       inviterName,
       groupName,
       groupId,
-    }).catch((err) => console.error("Invite email failed:", err));
+    }).then((result) => {
+      if (result.success) {
+        console.log(`✅ Invite email sent to ${email}`);
+      } else {
+        console.error(`❌ Invite email failed for ${email}:`, result.error);
+      }
+    }).catch((err) => console.error("❌ Invite email threw:", err));
 
     return NextResponse.json(member, { status: 201 });
   } catch (error) {

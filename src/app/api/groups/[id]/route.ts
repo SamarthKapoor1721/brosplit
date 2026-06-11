@@ -21,7 +21,11 @@ export async function GET(
     },
     include: {
       members: {
-        include: { user: { select: { id: true, name: true, email: true } } },
+        include: {
+          user: {
+            select: { id: true, name: true, email: true, upiId: true, upiDisplayName: true },
+          },
+        },
       },
       expenses: {
         include: {

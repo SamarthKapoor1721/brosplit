@@ -19,6 +19,11 @@ export async function calculateGroupBalances(groupId: string): Promise<Balance[]
     },
   });
 
+  const recordedSettlements = await prisma.settlement.findMany({
+    where: { groupId },
+    include: { payer: true, receiver: true },
+  });
+
   // Net balance per user: positive = owed money, negative = owes money
   const netBalances: Record<string, { amount: number; name: string }> = {};
 
@@ -36,6 +41,20 @@ export async function calculateGroupBalances(groupId: string): Promise<Balance[]
       }
       netBalances[split.userId].amount -= split.amount;
     }
+  }
+
+  // A settlement is real money moved payer → receiver: it raises the
+  // payer's net (debt repaid) and lowers the receiver's.
+  for (const s of recordedSettlements) {
+    if (!netBalances[s.payerId]) {
+      netBalances[s.payerId] = { amount: 0, name: s.payer.name || s.payer.email };
+    }
+    netBalances[s.payerId].amount += s.amount;
+
+    if (!netBalances[s.receiverId]) {
+      netBalances[s.receiverId] = { amount: 0, name: s.receiver.name || s.receiver.email };
+    }
+    netBalances[s.receiverId].amount -= s.amount;
   }
 
   // Simplify debts using greedy algorithm

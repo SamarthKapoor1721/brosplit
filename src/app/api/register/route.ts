@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { UPI_ID_REGEX } from "@/lib/upi";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
@@ -7,12 +8,19 @@ const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  upiId: z
+    .union([
+      z.string().trim().regex(UPI_ID_REGEX, "Enter a valid UPI ID like name@bank"),
+      z.literal(""),
+    ])
+    .optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, password } = registerSchema.parse(body);
+    const { name, email, password, upiId } = registerSchema.parse(body);
+    const upi = upiId?.trim() || null;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -32,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (existingUser && !existingUser.hashedPassword) {
       const user = await prisma.user.update({
         where: { email },
-        data: { name, hashedPassword },
+        data: { name, hashedPassword, upiId: upi, upiDisplayName: upi ? name : null },
       });
 
       return NextResponse.json(
@@ -46,6 +54,8 @@ export async function POST(request: NextRequest) {
         name,
         email,
         hashedPassword,
+        upiId: upi,
+        upiDisplayName: upi ? name : null,
       },
     });
 
